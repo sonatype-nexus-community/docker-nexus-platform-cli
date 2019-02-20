@@ -12,39 +12,6 @@
  */
 
 def call() {
-  pipeline {
-    agent {
-      label 'ubuntu-zion'
-    }
-    environment {
-      VERSION = cliBuild.getVersion()
-      COMMIT_ID = cliBuild.getCommitId()
-    }
-    triggers {
-      // every 4 minutes monday - friday
-      pollSCM(cliBuild.isCIBuild() ? 'H */4 * * 1-5' : '')
-    }
-    stages {
-      stage('Preparation') {
-        steps {
-          cliPreparation()
-        }
-      }
-      stage('Build') {
-        steps {
-          cliDockerBuild()
-        }
-      }
-      stage('Archive') {
-        steps {
-          cliArchive()
-        }
-      }
-      stage('Push') {
-        steps {
-          cliDockerPush()
-        }
-      }
-    }
-  }
+  sh "docker save sonatype/nexus-platform-cli:${env.VERSION} | gzip > docker-nexus-platform-cli.tar.gz"
+  archiveArtifacts artifacts: "docker-nexus-platform-cli.tar.gz", onlyIfSuccessful: true
 }
