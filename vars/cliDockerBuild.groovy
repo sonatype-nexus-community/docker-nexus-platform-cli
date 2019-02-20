@@ -12,5 +12,5 @@
  */
 
 def call() {
-
+  sh "docker build --quiet --no-cache --tag sonatype/nexus-platform-cli:${env.VERSION} --tag sonatype/nexus-platform-cli:latest ."
 }

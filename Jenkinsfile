@@ -6,11 +6,4 @@
 
 @Library(['docker-nexus-platform-cli-pipeline-library@INT-1376_create_jenkinsfile','jenkins-shared']) _
 
-withEnv(['KEY=value']) {
-  withCredentials([
-      [$class: 'UsernamePasswordMultiBinding', credentialsId: 'docker-hub-credentials',
-       usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD']
-  ]) {
-    cliPipeline()
-  }
-}
+cliPipeline()

@@ -24,11 +24,11 @@ String getVersion() {
 
 
 boolean isFeatureBuild() {
-  return currentBuild.fullProjectName ==~ /integrations\/depshield\/depshield-feature\/.*/
+  return currentBuild.fullProjectName ==~ /integrations\/cloud\/docker-nexus-platform-cli-feature\/.*/
 }
 
 boolean isCIBuild() {
-  return currentBuild.fullProjectName == 'integrations/depshield/depshield-ci'
+  return currentBuild.fullProjectName == 'integrations/cloud/docker-nexus-platform-cli'
 }
 
 def printEnvironment() {
