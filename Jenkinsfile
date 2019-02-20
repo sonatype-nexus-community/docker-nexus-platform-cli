@@ -4,6 +4,6 @@
  * "Sonatype" is a trademark of Sonatype, Inc.
  */
 
-@Library(['docker-nexus-platform-cli-pipeline-library@INT-1376_create_jenkinsfile','jenkins-shared']) _
+@Library(['docker-nexus-platform-cli-pipeline-library','jenkins-shared']) _
 
 cliPipeline()
