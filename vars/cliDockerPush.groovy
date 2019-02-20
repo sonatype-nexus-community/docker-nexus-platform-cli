@@ -16,8 +16,13 @@ def call() {
       [$class: 'UsernamePasswordMultiBinding', credentialsId: 'docker-hub-credentials',
        usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD']
   ]) {
-    sh "docker login --username ${env.DOCKERHUB_USERNAME} --password ${env.DOCKERHUB_PASSWORD}"
-    sh "docker push sonatype/nexus-platform-cli:${env.VERSION}"
-    sh "docker push sonatype/nexus-platform-cli:latest"
+    sh "echo ${env.DOCKERHUB_PASSWORD} | docker login --username ${env.DOCKERHUB_USERNAME} --password-stdin"
+    if (cliBuild.isFeatureBuild()) {
+      sh "docker tag sonatype/nexus-platform-cli:${env.VERSION} sonatype/nexus-platform-cli:dev-${env.BRANCH_NAME}"
+      sh "docker push sonatype/nexus-platform-cli:dev-${env.BRANCH_NAME}"
+    } else {
+      sh "docker push sonatype/nexus-platform-cli:${env.VERSION}"
+      sh "docker push sonatype/nexus-platform-cli:latest"
+    }
   }
 }

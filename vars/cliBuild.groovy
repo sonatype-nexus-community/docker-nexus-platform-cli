@@ -22,17 +22,12 @@ String getVersion() {
   return pom.version.replace("-SNAPSHOT", ".${commitDate}.${commitId.substring(0, 7)}").trim()
 }
 
-
 boolean isFeatureBuild() {
   return currentBuild.fullProjectName ==~ /integrations\/cloud\/docker-nexus-platform-cli-feature\/.*/
 }
 
 boolean isCIBuild() {
   return currentBuild.fullProjectName == 'integrations/cloud/docker-nexus-platform-cli'
-}
-
-def printEnvironment() {
-  sh 'env'
 }
 
 def runQuiet(String command) {
