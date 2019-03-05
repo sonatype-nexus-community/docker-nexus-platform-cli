@@ -11,33 +11,14 @@
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
 
-String getCommitId() {
-  return sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
-}
-
-String getVersion() {
-  def commitDate = runQuiet("git show -s --format=%cd --date=format:%Y%m%d-%H%M%S ${commitId}")
-
-  def pom = readMavenPom(file: 'pom.xml')
-  return pom.version.replace("-SNAPSHOT", ".${commitDate}.${commitId.substring(0, 7)}").trim()
-}
-
-boolean isFeatureBuild() {
-  return currentBuild.fullProjectName ==~ /integrations\/cloud\/.*-feature\/.*/
-}
-
-boolean isCIBuild() {
-  return ! isFeatureBuild()
-}
-
-def runQuiet(String command) {
-  def result
-  try {
-    result = sh(script: command, returnStdout: true)
-    return result.trim()
+def install() {
+  withEnv(["DESTDIR=${env.WORKSPACE}/circleci/",
+           "PATH=${env.PATH}:${env.WORKSPACE}/circleci/"]) {
+    sh "mkdir -p ${DESTDIR}"
+    sh "curl -fLSs https://circle.ci/cli | bash"
   }
-  catch (Exception e) {
-    print result
-    throw e
-  }
+}
+
+def validate() {
+  sh "${env.WORKSPACE}/circleci/circleci orb validate orb.yml"
 }

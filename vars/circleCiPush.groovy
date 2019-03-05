@@ -11,33 +11,15 @@
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
 
-String getCommitId() {
-  return sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
-}
-
-String getVersion() {
-  def commitDate = runQuiet("git show -s --format=%cd --date=format:%Y%m%d-%H%M%S ${commitId}")
-
-  def pom = readMavenPom(file: 'pom.xml')
-  return pom.version.replace("-SNAPSHOT", ".${commitDate}.${commitId.substring(0, 7)}").trim()
-}
-
-boolean isFeatureBuild() {
-  return currentBuild.fullProjectName ==~ /integrations\/cloud\/.*-feature\/.*/
-}
-
-boolean isCIBuild() {
-  return ! isFeatureBuild()
-}
-
-def runQuiet(String command) {
-  def result
-  try {
-    result = sh(script: command, returnStdout: true)
-    return result.trim()
-  }
-  catch (Exception e) {
-    print result
-    throw e
+def call() {
+  if (cliBuild.isFeatureBuild()) {
+    withCredentials([string(credentialsId: 'circleci-orbtest', variable: 'TOKEN')]) {
+      sh "echo host: https://circleci.com > ~/.circleci/cli.yml"
+      sh "echo endpoint: graphql-unstable >> ~/.circleci/cli.yml"
+      sh "echo token: ${TOKEN} >> ~/.circleci/cli.yml"
+      sh "${env.WORKSPACE}/circleci/circleci orb publish orb.yml orbtest/circleci-nexus-orb@dev:${env.BRANCH_NAME}"
+    }
+  } else {
+    // TODO get credentials from Justin
   }
 }
