@@ -12,44 +12,15 @@
  */
 
 def call() {
-  pipeline {
-    agent {
-      label 'ubuntu-zion'
-    }
-    environment {
-      VERSION = cliBuild.getVersion()
-      COMMIT_ID = cliBuild.getCommitId()
-    }
-    triggers {
-      // every 4 minutes monday - friday
-      pollSCM(cliBuild.isCIBuild() ? 'H */4 * * 1-5' : '')
-    }
-    stages {
-      stage('Preparation') {
-        steps {
-          cliPreparation()
-        }
-      }
-      stage('Build') {
-        steps {
-          cliDockerBuild()
-        }
-      }
-      stage('Archive') {
-        steps {
-          cliArchive()
-        }
-      }
-      stage('Push') {
-        steps {
-          cliDockerPush()
-        }
-      }
-      stage('GithubTag') {
-        steps {
-          cliGithubTag()
-        }
-      }
+  if (cliBuild.isCIBuild()) {
+    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: credentialsId,
+                      usernameVariable: 'GITHUB_API_USERNAME', passwordVariable: 'GITHUB_API_PASSWORD']]) {
+      sh "git tag \"${version}\""
+      sh """
+          git push \
+          https://${env.GITHUB_API_USERNAME}:${env.GITHUB_API_PASSWORD}@github.com/sonatype/docker-nexus-platform-cli.git \
+            ${version}
+        """
     }
   }
 }
