@@ -30,6 +30,11 @@ def call() {
           cliPreparation()
         }
       }
+      stage('Test') {
+        steps {
+          cliMavenTest()
+        }
+      }
       stage('Build') {
         steps {
           cliDockerBuild()

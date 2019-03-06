@@ -17,10 +17,11 @@ import com.sonatype.nexus.api.repository.v3.DefaultAsset
 import com.sonatype.nexus.api.repository.v3.DefaultComponent
 import com.sonatype.nexus.api.repository.v3.RepositoryManagerV3ClientBuilder
 
-import groovy.cli.commons.CliBuilder
+import groovy.cli.picocli.CliBuilder
 
 @Grab(group='org.slf4j', module='slf4j-simple', version='1.7.25')
 @Grab(group='com.sonatype.nexus', module='nexus-platform-api', version='3.5.20190215-094356.8a0ba7f')
+@Grab('commons-cli:commons-cli:1.4')
 
 cli = new CliBuilder(usage: 'Repository', expandArgumentFiles: true)
 cli.h(type: Boolean, longOpt: 'help', 'Prints this help text')
@@ -36,29 +37,26 @@ cli.A(args:2, valueSeparator:'=', argName:'key=value', 'Asset attributes, can be
 cli.r(type: String, longOpt: 'repository', 'Name of target repository on Nexus. Example: maven-releases', required: true)
 cli._(type: String, longOpt: 'tagname', 'The tag to apply (tag must already exist)')
 options = cli.parse(args)
-if (!options) {
-  System.exit(1)
-}
-if (options.h) {
+
+if (options?.h) {
   cli.usage()
-  System.exit(0)
+} else if (options) {
+  // create client
+  serverConfig = new ServerConfig(options.serverurl, new Authentication(options.username, options.password))
+  client = new RepositoryManagerV3ClientBuilder().withServerConfig(serverConfig).build()
+
+  // utility function to convert attribute list to map
+  toMap = { list -> (0..list.size() - 1).step(2).collectEntries { [(list[it]): list[it + 1]] } }
+
+  // set component coordinates
+  component = new DefaultComponent(options.format)
+  toMap(options.Cs).each { component.addAttribute(it.key, it.value) }
+
+  // set asset attributes
+  asset = new DefaultAsset(options.filename.name, options.filename.newInputStream())
+  toMap(options.As).each { asset.addAttribute(it.key, it.value) }
+  component.addAsset(asset)
+
+  // upload to nexus repository
+  client.upload(options.repository, component)
 }
-
-// create client
-serverConfig = new ServerConfig(options.serverurl, new Authentication(options.username, options.password))
-client = new RepositoryManagerV3ClientBuilder().withServerConfig(serverConfig).build()
-
-// utility function to convert attribute list to map
-toMap = { list -> (0..list.size()-1).step(2).collectEntries { [(list[it]): list[it+1]] } }
-
-// set component coordinates
-component = new DefaultComponent(options.format)
-toMap(options.Cs).each { component.addAttribute(it.key, it.value) }
-
-// set asset attributes
-asset = new DefaultAsset(options.filename.name, options.filename.newInputStream())
-toMap(options.As).each { asset.addAttribute(it.key, it.value) }
-component.addAsset(asset)
-
-// upload to nexus repository
-client.upload(options.repository, component)
