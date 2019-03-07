@@ -20,6 +20,6 @@ def call() {
       sh "${env.WORKSPACE}/circleci/circleci orb publish orb.yml orbtest/circleci-nexus-orb@dev:${env.BRANCH_NAME}"
     }
   } else {
-    // TODO get credentials from Justin
+    // TODO get credentials
   }
 }
