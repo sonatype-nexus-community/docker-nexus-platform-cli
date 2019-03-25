@@ -1,4 +1,4 @@
-
+package org.sonatype.nexus.platform.cli
 
 /*
  * Copyright (c) 2019-present Sonatype, Inc. All rights reserved.

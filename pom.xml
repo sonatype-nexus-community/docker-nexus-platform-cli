@@ -8,8 +8,42 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.sonatype.nexus.platform.cli</groupId>
   <artifactId>docker-nexus-platform-cli</artifactId>
-  <version>0.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
+  <version>1.0-SNAPSHOT</version>
+
+  <packaging>jar</packaging>
+
+  <properties>
+    <dockerfile-maven-version>1.4.10</dockerfile-maven-version>
+    <docker-maven-version>1.2.0</docker-maven-version>
+  </properties>
+
+  <build>
+    <finalName>nexus-platform-cli</finalName>
+    <plugins>
+      <plugin>
+        <groupId>com.spotify</groupId>
+        <artifactId>dockerfile-maven-plugin</artifactId>
+        <version>${dockerfile-maven-version}</version>
+        <executions>
+          <execution>
+            <id>default</id>
+            <goals>
+              <goal>build</goal>
+              <goal>push</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <repository>sonatype/docker-nexus-platform-cli</repository>
+          <tag>${project.version}</tag>
+          <buildArgs>
+            <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+          </buildArgs>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

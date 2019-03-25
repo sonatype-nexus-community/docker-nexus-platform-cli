@@ -17,6 +17,9 @@ FROM groovy:2.5-jre-alpine
 ENV SONATYPE_DIR=/opt/sonatype
 
 COPY src/main/groovy/NexusPublisher.groovy ${SONATYPE_DIR}/bin/NexusPublisher.groovy
+COPY target/nexus-platform-cli.jar ${SONATYPE_DIR}/bin/nexus-platform-cli.jar
+COPY src/main/sh/evaluate.sh ${SONATYPE_DIR}/bin/evaluate.sh
+COPY src/main/sh/publish.sh ${SONATYPE_DIR}/bin/publish.sh
 
 # Run script once to bake Grab dependencies into image
 RUN groovy ${SONATYPE_DIR}/bin/NexusPublisher.groovy || true
