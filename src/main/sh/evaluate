@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+# Copyright (c) 2019-present Sonatype, Inc. All rights reserved.
+# Includes the third-party code listed at http://links.sonatype.com/products/nexus/attributions.
+# "Sonatype" is a trademark of Sonatype, Inc.
+#
+SONATYPE_OUT_DIR=${SONATYPE_DIR}/out
+SONATYPE_LIB_DIR=${SONATYPE_DIR}/lib
+SONATYPE_CLI_PKG=org.sonatype.nexus.platform.cli
+SONATYPE_RESULTS_FILE=results.txt
+
+mkdir -p ${SONATYPE_OUT_DIR}
+java -cp ${SONATYPE_LIB_DIR}/nexus-platform-cli.jar ${SONATYPE_CLI_PKG}.NexusPolicyEvaluator $@ 2>&1 | tee ${SONATYPE_OUT_DIR}/${SONATYPE_RESULTS_FILE}
+java -cp ${SONATYPE_LIB_DIR}/nexus-platform-cli.jar ${SONATYPE_CLI_PKG}.PolicyEvaluationResultsProcessor $@ --results ${SONATYPE_OUT_DIR}/${SONATYPE_RESULTS_FILE}

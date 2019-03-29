@@ -12,14 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM groovy:2.5-jre-alpine
+#FROM groovy:2.5-jre-alpine
+FROM openjdk:8-alpine
 
 ENV SONATYPE_DIR=/opt/sonatype
 
-COPY src/main/groovy/NexusPublisher.groovy ${SONATYPE_DIR}/bin/NexusPublisher.groovy
-COPY target/nexus-platform-cli.jar ${SONATYPE_DIR}/bin/nexus-platform-cli.jar
-COPY src/main/sh/evaluate.sh ${SONATYPE_DIR}/bin/evaluate.sh
-COPY src/main/sh/publish.sh ${SONATYPE_DIR}/bin/publish.sh
+COPY target/nexus-platform-cli.jar ${SONATYPE_DIR}/lib/nexus-platform-cli.jar
+COPY src/main/sh/evaluate ${SONATYPE_DIR}/bin/evaluate
+
+RUN find ${SONATYPE_DIR}/bin -type f -exec chmod +x {} \;
 
 # Run script once to bake Grab dependencies into image
-RUN groovy ${SONATYPE_DIR}/bin/NexusPublisher.groovy || true
+#RUN groovy ${SONATYPE_DIR}/bin/NexusPublisher.groovy || true
