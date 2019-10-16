@@ -16,6 +16,6 @@ def call() {
            "PATH=${env.PATH}:${env.WORKSPACE}/circleci/",
            "VERSION=0.1.5879"]) {
     sh "mkdir -p ${DESTDIR}"
-    sh "curl -fLSs https://circle.ci/cli | bash -x"
+    sh "curl -fLSs https://circle.ci/cli | bash"
   }
 }
