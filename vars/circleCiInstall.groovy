@@ -15,6 +15,6 @@ def call() {
   withEnv(["DESTDIR=${env.WORKSPACE}/circleci/",
            "PATH=${env.PATH}:${env.WORKSPACE}/circleci/"]) {
     sh "mkdir -p ${DESTDIR}"
-    sh "curl -fLSs https://circle.ci/cli | bash"
+    sh "curl -fLSs https://circle.ci/cli | bash -x"
   }
 }
