@@ -12,9 +12,10 @@
  */
 
 def call() {
+  def circleCiCliVersion = '0.1.5879'
   withEnv(["DESTDIR=${env.WORKSPACE}/circleci/",
            "PATH=${env.PATH}:${env.WORKSPACE}/circleci/",
-           "VERSION=0.1.5879"]) {
+           "VERSION=${circleCiCliVersion}"]) {
     sh "mkdir -p ${DESTDIR}"
     sh "curl -fLSs https://circle.ci/cli | bash"
   }
