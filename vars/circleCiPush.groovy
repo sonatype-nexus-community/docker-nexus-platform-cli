@@ -13,13 +13,17 @@
 
 def call() {
   if (cliBuild.isFeatureBuild()) {
+    sh "echo host: https://circleci.com > ~/.circleci/cli.yml"
+    sh "echo endpoint: graphql-unstable >> ~/.circleci/cli.yml"
     withCredentials([string(credentialsId: 'circleci-orbtest', variable: 'TOKEN')]) {
-      sh "echo host: https://circleci.com > ~/.circleci/cli.yml"
-      sh "echo endpoint: graphql-unstable >> ~/.circleci/cli.yml"
       sh "echo token: ${TOKEN} >> ~/.circleci/cli.yml"
       sh "${env.WORKSPACE}/circleci/circleci orb publish orb.yml orbtest/circleci-nexus-orb@dev:${env.BRANCH_NAME}"
     }
-  } else {
-    // TODO get credentials
+  }
+  else {
+    withCredentials([string(credentialsId: 'circleci-deployment-token', variable: 'TOKEN')]) {
+      sh "echo token: ${TOKEN} >> ~/.circleci/cli.yml"
+      sh "${env.WORKSPACE}/circleci/circleci orb publish orb.yml sonatype/circleci-nexus-orb patch"
+    }
   }
 }
