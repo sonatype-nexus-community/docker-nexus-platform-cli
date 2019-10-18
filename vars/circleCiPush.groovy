@@ -23,7 +23,7 @@ def call() {
   else {
     withCredentials([string(credentialsId: 'circleci-deployment-token', variable: 'TOKEN')]) {
       sh "echo token: ${TOKEN} >> ~/.circleci/cli.yml"
-      sh "${env.WORKSPACE}/circleci/circleci orb publish increment orb.yml sonatype/circleci-nexus-orb patch"
+      sh "${env.WORKSPACE}/circleci/circleci orb publish increment orb.yml sonatype/nexus-platform-orb patch"
     }
   }
 }
